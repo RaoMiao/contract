@@ -478,9 +478,9 @@ contract TokenTransferDelegate {
 contract LoopringProtocolImpl is LoopringProtocol {
     using AddressUtil   for address;
     using MathUint      for uint;
-    address public constant lrcTokenAddress             = 0x763FBcB17740A13dbC35b547e13fB80fdA1B6Da6;
-    address public constant tokenRegistryAddress        = 0xABF1C45F657cb69E9Ad725Fe9Ee68bb24461bC00;
-    address public constant delegateAddress             = 0xeB44deD2E942A31D3d673470F3D076AFd89b0529;
+    address public constant lrcTokenAddress             = 0x3B47D9271E79fA69Ec3B7602829e0A37A84411a2;
+    address public constant tokenRegistryAddress        = 0xd72D62F163d038a7fb47d7eB60bFb593E6b5dD9F;
+    address public constant delegateAddress             = 0x4c7014d6B2f3489Bc3BC203fD5B419b9aCb2d647;
     uint64  public  ringIndex                   = 0;
     uint8   public constant walletSplitPercentage       = 20;
     // Exchange rate (rate) is the amount to sell or sold divided by the amount
