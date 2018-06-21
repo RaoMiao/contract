@@ -25,7 +25,7 @@ pragma solidity ^0.4.11;
 contract ERC20Basic {
   uint public totalSupply;
   function balanceOf(address who) public constant returns (uint);
-  function transfer(address to, uint value) public;
+  function transfer(address to, uint value) public ;
   event Transfer(address indexed from, address indexed to, uint value);
 }
 
@@ -33,9 +33,9 @@ contract ERC20Basic {
  * Math operations with safety checks
  */
 library SafeMath {
-  function mul(uint a, uint b) public pure returns (uint) {
+  function mul(uint a, uint b) internal pure returns (uint) {
     uint c = a * b;
-    require(a == 0 || c / a == b);
+    assert(a == 0 || c / a == b);
     return c;
   }
 
@@ -47,17 +47,17 @@ library SafeMath {
   }
 
   function sub(uint a, uint b) internal pure returns (uint) {
-    require(b <= a);
+    assert(b <= a);
     return a - b;
   }
 
   function add(uint a, uint b) internal pure returns (uint) {
     uint c = a + b;
-    require(c >= a);
+    assert(c >= a);
     return c;
   }
 
-  function max64(uint64 a, uint64 b) internal pure  returns (uint64) {
+  function max64(uint64 a, uint64 b) internal pure returns (uint64) {
     return a >= b ? a : b;
   }
 
@@ -88,7 +88,7 @@ contract BasicToken is ERC20Basic {
    */
   modifier onlyPayloadSize(uint size) {
      if(msg.data.length < size + 4) {
-       return;
+       revert();
      }
      _;
   }
@@ -166,7 +166,7 @@ contract StandardToken is BasicToken, ERC20 {
     //  allowance to zero by calling `approve(_spender, 0)` if it is not
     //  already 0 to mitigate the race condition described here:
     //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-    if ((_value != 0) && (allowed[msg.sender][_spender] != 0)) return;
+    if ((_value != 0) && (allowed[msg.sender][_spender] != 0)) revert();
 
     allowed[msg.sender][_spender] = _value;
     emit Approval(msg.sender, _spender, _value);
@@ -289,7 +289,7 @@ contract LoopringToken is StandardToken {
             _;
         } else {
             emit InvalidCaller(msg.sender);
-            return;
+            revert();
         }
     }
 
@@ -298,7 +298,7 @@ contract LoopringToken is StandardToken {
             _;
         } else {
             emit InvalidState("Sale has not started yet");
-            return;
+            revert();
         }
     }
 
@@ -307,7 +307,7 @@ contract LoopringToken is StandardToken {
             _;
         } else {
             emit InvalidState("Sale is not in progress");
-            return;
+            revert();
         }
     }
 
@@ -316,7 +316,7 @@ contract LoopringToken is StandardToken {
             _;
         } else {
             emit InvalidState("Sale is not ended yet");
-            return;
+            revert();
         }
     }
 
@@ -328,7 +328,7 @@ contract LoopringToken is StandardToken {
      * be sent to this address.
      * This address will be : 0x00073F7155459C9205010Cb3453a0f392a0C3210
      */
-    function LoopringToken(address _target) public {
+    function LoopringToken(address _target) public{
         target = _target;
     }
 
@@ -341,7 +341,7 @@ contract LoopringToken is StandardToken {
     function start(uint _firstblock) public onlyOwner beforeStart {
         if (_firstblock <= block.number) {
             // Must specify a block in the future.
-            return;
+            revert();
         }
 
         firstblock = _firstblock;
@@ -373,7 +373,7 @@ contract LoopringToken is StandardToken {
     /// @param recipient Address that newly issued token will be sent to.
     function issueToken(address recipient) public payable inProgress {
         // We only accept minimum purchase of 0.01 ETH.
-        require(msg.value >= 0.01 ether);
+        assert(msg.value >= 0.01 ether);
 
         uint tokens = computeTokenAmount(msg.value);
         totalEthReceived = totalEthReceived.add(msg.value);
@@ -388,7 +388,7 @@ contract LoopringToken is StandardToken {
         );
 
         if (!target.send(msg.value)) {
-            return;
+            revert();
         }
     }
 
