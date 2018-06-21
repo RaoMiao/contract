@@ -1,0 +1,1 @@
+geth --datadir ./privatenet init genesis.json
